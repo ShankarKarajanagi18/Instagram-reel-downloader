@@ -72,9 +72,30 @@ Params: `?videoUrl=<cdn_url>&filename=reel.mp4`
 
 ## Deployment
 
-**Backend** (Railway/Render): set PORT, FRONTEND_URL, NODE_ENV=production; start: `node server.js`
+### Backend (Render or Railway)
 
-**Frontend** (Vercel/Netlify): set REACT_APP_API_URL to backend URL; build: `npm run build`; dir: `frontend/build`
+1. Set root/service directory to `backend`
+2. Build command: `npm install`
+3. Start command: `npm start`
+4. Environment variables:
+    - `NODE_ENV=production`
+    - `HOST=0.0.0.0`
+    - `PORT` (provided automatically by most platforms)
+    - `FRONTEND_URLS=https://your-frontend.vercel.app`
+
+After deploy, verify health endpoint:
+- `https://your-backend-domain/api/health`
+
+### Frontend (Vercel/Netlify)
+
+Set:
+- `REACT_APP_API_URL=https://your-backend-domain/api`
+
+Build:
+- `npm run build`
+
+Output dir:
+- `frontend/build`
 
 ## Tech Stack
 | Layer    | Tech                              |

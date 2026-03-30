@@ -129,9 +129,24 @@ router.get("/proxy", async (req, res) => {
     return res.status(400).json({ success: false, message: "videoUrl is required" });
   }
 
-  // Only allow Instagram CDN domains
-  const allowedDomains = ["cdninstagram.com", "instagram.com", "fbcdn.net", "scontent"];
-  const isAllowed = allowedDomains.some((d) => videoUrl.includes(d));
+  let parsedVideoUrl;
+  try {
+    parsedVideoUrl = new URL(videoUrl);
+  } catch {
+    return res.status(400).json({ success: false, message: "Invalid videoUrl." });
+  }
+
+  if (parsedVideoUrl.protocol !== "https:") {
+    return res.status(400).json({ success: false, message: "Only HTTPS video URLs are allowed." });
+  }
+
+  // Only allow trusted Instagram/Facebook CDN hosts.
+  const hostname = parsedVideoUrl.hostname.toLowerCase();
+  const allowedHostSuffixes = ["cdninstagram.com", "instagram.com", "fbcdn.net"];
+  const isAllowed =
+    hostname === "scontent"
+    || hostname.startsWith("scontent.")
+    || allowedHostSuffixes.some((suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`));
 
   if (!isAllowed) {
     return res.status(403).json({ success: false, message: "Unauthorized video source." });
@@ -140,7 +155,7 @@ router.get("/proxy", async (req, res) => {
   try {
     const response = await axios({
       method: "GET",
-      url: videoUrl,
+      url: parsedVideoUrl.toString(),
       responseType: "stream",
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",

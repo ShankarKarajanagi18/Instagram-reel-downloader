@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Backend API for Instagram Reels Downloader",
   "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
+    "build": "node -e \"console.log('Backend has no build step. Ready for deployment.')\"",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
