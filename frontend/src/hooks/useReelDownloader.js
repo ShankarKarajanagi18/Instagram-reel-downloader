@@ -5,7 +5,11 @@
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE =
+  process.env.REACT_APP_API_URL?.trim() ||
+  (process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5000/api'
+    : 'https://instagram-reel-downloader-igcn.onrender.com/api');
 
 export function useReelDownloader() {
   const [loading, setLoading] = useState(false);
