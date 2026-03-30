@@ -44,6 +44,13 @@ function formatDuration(seconds) {
 }
 
 /* ─── POST /api/download/reel ─────────────────────────────── */
+router.get("/reel", (req, res) => {
+  res.status(405).json({
+    success: false,
+    message: "Use POST /api/download/reel with JSON body: { \"url\": \"https://www.instagram.com/reel/.../\" }",
+  });
+});
+
 router.post("/reel", async (req, res) => {
   const { url } = req.body;
 
