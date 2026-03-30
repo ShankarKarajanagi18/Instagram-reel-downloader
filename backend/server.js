@@ -72,6 +72,19 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running", timestamp: new Date().toISOString() });
 });
 
+/* ─── Root Info Route ─────────────────────────────────────── */
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "Instagram Reels Downloader API is running",
+    endpoints: {
+      health: "/api/health",
+      reel: "POST /api/download/reel",
+      proxy: "GET /api/download/proxy?videoUrl=<url>&filename=reel.mp4",
+    },
+  });
+});
+
 /* ─── 404 Handler ─────────────────────────────────────────── */
 app.use((req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });
