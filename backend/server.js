@@ -19,6 +19,27 @@ const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL ||
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+const normalizedAllowedOrigins = allowedOrigins.map((origin) => origin.replace(/\/+$/, ""));
+const allowVercelPreviews = (process.env.ALLOW_VERCEL_PREVIEWS || "true").toLowerCase() === "true";
+
+function isAllowedOrigin(origin) {
+  const normalizedOrigin = origin.replace(/\/+$/, "");
+
+  if (normalizedAllowedOrigins.includes(normalizedOrigin)) {
+    return true;
+  }
+
+  // Support Vercel preview/prod domains for this project.
+  if (
+    allowVercelPreviews
+    && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(normalizedOrigin)
+    && normalizedOrigin.includes("instagram-reel-downloader")
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 /* Required for correct client IP detection behind reverse proxies (Render/Railway/etc.) */
 app.set("trust proxy", 1);
@@ -34,7 +55,7 @@ app.use(
         return;
       }
 
-      if (allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         callback(null, true);
         return;
       }
